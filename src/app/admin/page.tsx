@@ -5,8 +5,9 @@ import { BarChart, Users, Utensils, ShoppingCart } from "lucide-react"
 import { MenuManager } from "@/components/admin/menu-manager";
 import { UserManager } from "@/components/admin/user-manager";
 import { OrderPlacer } from "@/components/admin/order-placer";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, Bar, XAxis, YAxis, CartesianGrid, BarChart as RechartsBarChart } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { users, drinks } from "@/lib/data";
+import { Bar, XAxis, YAxis, CartesianGrid, BarChart as RechartsBarChart } from "recharts";
 
 const chartData = users.filter(u => u.role === 'admin').map(admin => ({
   name: admin.name.split(' ')[0],
