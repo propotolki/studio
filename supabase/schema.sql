@@ -279,3 +279,10 @@ with check (
     select 1 from listings l where l.id = availability.listing_id and l.host_id = auth.uid()
   )
 );
+
+alter table notifications add column if not exists read_at timestamptz;
+
+create policy "notifications_owner_update" on notifications
+for update
+using (user_id = auth.uid() or current_app_role() = 'admin')
+with check (user_id = auth.uid() or current_app_role() = 'admin');

@@ -101,3 +101,10 @@ Each endpoint contains `TODO` blocks with exact integration spots for:
 - `GET/POST /api/host/availability` — host day-by-day calendar and price overrides.
 - `GET/PATCH /api/admin/moderation/reviews` — admin review moderation queue.
 - `GET /api/notifications` — user notification feed.
+
+## Competitive extensions (phase 4)
+
+- `GET /api/admin/analytics` — GMV, paid amount, moderation/disputes KPI snapshot.
+- `PATCH /api/guest/bookings/[id]/cancel` — guest cancellation flow + host notification.
+- `PATCH /api/notifications/mark-read` — bulk mark notifications as read.
+- `GET /api/host/payouts` — host payout history endpoint.
