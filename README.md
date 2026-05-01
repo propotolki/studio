@@ -128,3 +128,9 @@ Each endpoint contains `TODO` blocks with exact integration spots for:
 - Payload hashing + replay protection table (`webhook_events`) for webhooks.
 - Input sanitization for user-generated text in chat/reports.
 - Event outbox kept for asynchronous secure processing.
+
+## Competitive extensions (phase 8)
+
+- `GET /api/admin/sla` — SLA dashboard for dispute response time breaches.
+- Centralized audit logging (`audit_logs`) for critical state transitions.
+- Audit hooks added for booking cancellation, host status changes, and review moderation.

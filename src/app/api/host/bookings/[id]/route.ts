@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/server/supabase';
 import { getSessionUser } from '@/lib/server/auth';
 import { createNotification } from '@/lib/server/notifications';
+import { logAudit } from '@/lib/server/audit';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser(req);
@@ -30,6 +31,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   await createNotification(booking.guest_id, 'Статус бронирования обновлен', `Ваше бронирование ${status}.`);
+  await logAudit(user.id, 'booking.status.update', 'booking', id, { status });
 
   return NextResponse.json({ data });
 }

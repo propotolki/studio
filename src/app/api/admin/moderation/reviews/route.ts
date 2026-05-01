@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/server/supabase';
+import { getSessionUser } from '@/lib/server/auth';
+import { logAudit } from '@/lib/server/audit';
 
 export async function GET() {
   const { data, error } = await supabaseAdmin
@@ -13,6 +15,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
+  const user = await getSessionUser(req);
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { reviewId, status } = await req.json() as { reviewId?: string; status?: 'published' | 'rejected' };
   if (!reviewId || !status) return NextResponse.json({ error: 'reviewId and status required' }, { status: 400 });
 

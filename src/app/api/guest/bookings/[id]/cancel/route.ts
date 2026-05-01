@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUser } from '@/lib/server/auth';
 import { supabaseAdmin } from '@/lib/server/supabase';
 import { createNotification } from '@/lib/server/notifications';
+import { logAudit } from '@/lib/server/audit';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser(req);
@@ -32,6 +33,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const hostId = (booking as any).listings.host_id as string;
   await createNotification(hostId, 'Бронирование отменено', 'Гость отменил бронирование.');
+  await logAudit(user.id, 'booking.cancel', 'booking', id, { reason: 'guest_cancel' });
 
   return NextResponse.json({ data });
 }
