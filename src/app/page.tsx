@@ -22,14 +22,14 @@ export default function LoginPage() {
 
     // Simulate API call
     setTimeout(() => {
-      if (phone === 'owner') {
-        toast({ title: "Welcome, Owner!", description: "Redirecting to your dashboard." });
+      if (phone === 'host') {
+        toast({ title: "Welcome, Host!", description: "Redirecting to host cabinet." });
         router.push('/owner');
       } else if (phone === 'admin') {
-        toast({ title: "Welcome, Barista!", description: "Redirecting to the admin panel." });
+        toast({ title: "Welcome, Admin!", description: "Redirecting to moderation panel." });
         router.push('/admin');
       } else if (phone && password) {
-        toast({ title: "Login Successful", description: "Welcome back! Let's get some coffee." });
+        toast({ title: "Login Successful", description: "Welcome! Opening rental marketplace." });
         router.push('/menu');
       } else {
         toast({
@@ -51,14 +51,14 @@ export default function LoginPage() {
             <div className="flex justify-center mb-4">
               <Coffee className="h-12 w-12 text-primary" />
             </div>
-            <CardTitle className="text-3xl font-headline">Ulyanova Cafe Express</CardTitle>
-            <CardDescription>Please sign in to continue</CardDescription>
-            <CardDescription className="text-xs pt-2">Demo: type 'admin' or 'owner' in phone field to access other roles.</CardDescription>
+            <CardTitle className="text-3xl font-headline">VK Rental Mini App</CardTitle>
+            <CardDescription>Войдите через демо-учетку (далее подключается VK ID)</CardDescription>
+            <CardDescription className="text-xs pt-2">Demo: введите host или admin в поле телефона для разных ролей.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" type="text" placeholder="e.g., 79991234567" required value={phone} onChange={(e) => setPhone(e.target.value)} disabled={isLoading} />
+              <Label htmlFor="phone">Login</Label>
+              <Input id="phone" type="text" placeholder="host | admin | any user login" required value={phone} onChange={(e) => setPhone(e.target.value)} disabled={isLoading} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -67,7 +67,7 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={isLoading}>
-              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Sign In'}
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Войти'}
             </Button>
           </CardFooter>
         </form>
