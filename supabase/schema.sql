@@ -319,3 +319,6 @@ create policy "event_outbox_admin_only" on event_outbox
 for all
 using (current_app_role() = 'admin')
 with check (current_app_role() = 'admin');
+
+alter table bookings add column if not exists expires_at timestamptz;
+create index if not exists idx_bookings_status_expires_at on bookings(status, expires_at);

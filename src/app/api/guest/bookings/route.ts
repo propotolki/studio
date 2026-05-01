@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
       date_to: dateTo,
       total_price: totalPrice,
       status: 'pending',
+      expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
     })
     .select('*')
     .single();

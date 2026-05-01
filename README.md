@@ -114,3 +114,9 @@ Each endpoint contains `TODO` blocks with exact integration spots for:
 - `POST /api/metrics/listing-interaction` — behavioral signals collection (views/favorites/booking intents).
 - `GET /api/search` now incorporates behavioral ranking signals from listing metrics.
 - `POST /api/admin/workers/outbox-dispatch` — event outbox dispatcher for async processing.
+
+## Competitive extensions (phase 6)
+
+- `GET /api/host/calendar/ical` — iCal export for host booking sync.
+- `POST /api/admin/workers/booking-expire` — background expiration of stale pending bookings.
+- `GET /api/guest/recommendations` — personalized recommendations by favorite cities.
