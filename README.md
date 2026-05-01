@@ -120,3 +120,11 @@ Each endpoint contains `TODO` blocks with exact integration spots for:
 - `GET /api/host/calendar/ical` — iCal export for host booking sync.
 - `POST /api/admin/workers/booking-expire` — background expiration of stale pending bookings.
 - `GET /api/guest/recommendations` — personalized recommendations by favorite cities.
+
+## Security hardening (phase 7)
+
+- Timing-safe signature checks for VK auth and VK Pay webhook.
+- In-memory rate limiting for sensitive endpoints.
+- Payload hashing + replay protection table (`webhook_events`) for webhooks.
+- Input sanitization for user-generated text in chat/reports.
+- Event outbox kept for asynchronous secure processing.

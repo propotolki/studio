@@ -1,4 +1,5 @@
 import { createHmac } from 'crypto';
+import { safeEqualHex } from '@/lib/server/security';
 import { NextRequest } from 'next/server';
 import type { AppRole } from '@/lib/rbac/roles';
 import { supabaseAdmin } from '@/lib/server/supabase';
@@ -14,7 +15,7 @@ function verifyVkSignature(rawInitData: string, signature: string) {
   if (!secret) return false;
 
   const expected = createHmac('sha256', secret).update(rawInitData).digest('hex');
-  return expected === signature;
+  return safeEqualHex(expected, signature);
 }
 
 export async function resolveVkUser(req: NextRequest): Promise<SessionUser | null> {

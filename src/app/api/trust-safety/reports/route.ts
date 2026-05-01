@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUser } from '@/lib/server/auth';
 import { supabaseAdmin } from '@/lib/server/supabase';
+import { checkRateLimit, sanitizeText } from '@/lib/server/security';
 
 export async function POST(req: NextRequest) {
+  const rl = checkRateLimit(req, 30, 60_000);
+  if (!rl.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
   const user = await getSessionUser(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -17,8 +20,8 @@ export async function POST(req: NextRequest) {
       reporter_id: user.id,
       target_type: body.targetType,
       target_id: body.targetId,
-      reason: body.reason,
-      details: body.details ?? null,
+      reason: sanitizeText(body.reason, 300),
+      details: body.details ? sanitizeText(body.details, 1000) : null,
     })
     .select('*')
     .single();
