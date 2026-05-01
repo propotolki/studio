@@ -94,3 +94,10 @@ Each endpoint contains `TODO` blocks with exact integration spots for:
 - `GET /api/payments/reconciliation` finance reconciliation snapshot.
 - `POST /api/payments/chargebacks` chargeback workflow creation.
 - `POST /api/chat/[bookingId]/read` + `PATCH /api/chat/[bookingId]/status` read receipts and delivery statuses.
+
+## Competitive extensions (phase 3)
+
+- `GET/POST/DELETE /api/guest/favorites` — favorites flow for guests.
+- `GET/POST /api/host/availability` — host day-by-day calendar and price overrides.
+- `GET/PATCH /api/admin/moderation/reviews` — admin review moderation queue.
+- `GET /api/notifications` — user notification feed.

@@ -233,3 +233,49 @@ create policy "admin_manage_chargebacks" on chargebacks
 for all
 using (current_app_role() = 'admin')
 with check (current_app_role() = 'admin');
+
+create table if not exists favorites (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references profiles(id),
+  listing_id uuid not null references listings(id),
+  created_at timestamptz not null default now(),
+  unique (user_id, listing_id)
+);
+alter table favorites enable row level security;
+
+create table if not exists availability (
+  id uuid primary key default gen_random_uuid(),
+  listing_id uuid not null references listings(id),
+  date date not null,
+  is_available boolean not null default true,
+  price_override numeric(12,2),
+  created_at timestamptz not null default now(),
+  unique (listing_id, date)
+);
+alter table availability enable row level security;
+
+create policy "favorites_owner_select" on favorites
+for select
+using (user_id = auth.uid() or current_app_role() = 'admin');
+
+create policy "favorites_owner_write" on favorites
+for all
+using (user_id = auth.uid() or current_app_role() = 'admin')
+with check (user_id = auth.uid() or current_app_role() = 'admin');
+
+create policy "availability_public_read" on availability
+for select
+using (current_app_role() in ('guest','host','admin'));
+
+create policy "availability_host_manage" on availability
+for all
+using (
+  current_app_role() = 'admin' or exists (
+    select 1 from listings l where l.id = availability.listing_id and l.host_id = auth.uid()
+  )
+)
+with check (
+  current_app_role() = 'admin' or exists (
+    select 1 from listings l where l.id = availability.listing_id and l.host_id = auth.uid()
+  )
+);
