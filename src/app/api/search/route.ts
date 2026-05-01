@@ -1,12 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/server/supabase';
 
-function scoreListing(item: { title: string; city: string; price_per_night: number }, q: string) {
+type ListingRow = {
+  id: string;
+  title: string;
+  city: string;
+  price_per_night: number;
+  created_at: string;
+};
+
+function scoreListing(item: ListingRow, q: string, metrics: { views: number; favorites: number; booking_intents: number } | undefined) {
   const query = q.toLowerCase();
   let score = 0;
   if (item.title.toLowerCase().includes(query)) score += 5;
   if (item.city.toLowerCase().includes(query)) score += 3;
   score += Math.max(0, 2 - Number(item.price_per_night) / 10000);
+  if (metrics) {
+    score += Math.min(3, metrics.views / 100);
+    score += Math.min(5, metrics.favorites / 20);
+    score += Math.min(7, metrics.booking_intents / 10);
+  }
   return score;
 }
 
@@ -32,17 +45,20 @@ export async function GET(req: NextRequest) {
   const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const list = data ?? [];
+  const list = (data ?? []) as ListingRow[];
+
+  const { data: metricsRows } = await supabaseAdmin.from('listing_metrics').select('listing_id,views,favorites,booking_intents');
+  const metricsMap = new Map<string, { views: number; favorites: number; booking_intents: number }>((metricsRows ?? []).map((m: any) => [m.listing_id, { views: Number(m.views ?? 0), favorites: Number(m.favorites ?? 0), booking_intents: Number(m.booking_intents ?? 0) }]));
 
   if (sort === 'recommended') {
     const ranked = list
-      .map((item: { title: string; city: string; price_per_night: number } & Record<string, any>) => ({ ...item, rank: scoreListing(item, q || item.city) }))
-      .sort((a: { rank: number }, b: { rank: number }) => b.rank - a.rank);
+      .map((item) => ({ ...item, rank: scoreListing(item, q || item.city, metricsMap.get(item.id)) }))
+      .sort((a, b) => b.rank - a.rank);
     return NextResponse.json({ data: ranked });
   }
 
-  if (sort === 'price_asc') list.sort((a: any, b: any) => Number(a.price_per_night) - Number(b.price_per_night));
-  if (sort === 'price_desc') list.sort((a: any, b: any) => Number(b.price_per_night) - Number(a.price_per_night));
+  if (sort === 'price_asc') list.sort((a, b) => Number(a.price_per_night) - Number(b.price_per_night));
+  if (sort === 'price_desc') list.sort((a, b) => Number(b.price_per_night) - Number(a.price_per_night));
 
   return NextResponse.json({ data: list });
 }

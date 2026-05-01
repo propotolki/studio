@@ -286,3 +286,36 @@ create policy "notifications_owner_update" on notifications
 for update
 using (user_id = auth.uid() or current_app_role() = 'admin')
 with check (user_id = auth.uid() or current_app_role() = 'admin');
+
+create table if not exists listing_metrics (
+  listing_id uuid primary key references listings(id),
+  views int not null default 0,
+  favorites int not null default 0,
+  booking_intents int not null default 0,
+  updated_at timestamptz not null default now()
+);
+alter table listing_metrics enable row level security;
+
+create policy "listing_metrics_public_read" on listing_metrics
+for select
+using (current_app_role() in ('guest','host','admin'));
+
+create policy "listing_metrics_admin_write" on listing_metrics
+for all
+using (current_app_role() = 'admin')
+with check (current_app_role() = 'admin');
+
+create table if not exists event_outbox (
+  id uuid primary key default gen_random_uuid(),
+  topic text not null,
+  payload jsonb not null,
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  processed_at timestamptz
+);
+alter table event_outbox enable row level security;
+
+create policy "event_outbox_admin_only" on event_outbox
+for all
+using (current_app_role() = 'admin')
+with check (current_app_role() = 'admin');

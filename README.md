@@ -108,3 +108,9 @@ Each endpoint contains `TODO` blocks with exact integration spots for:
 - `PATCH /api/guest/bookings/[id]/cancel` — guest cancellation flow + host notification.
 - `PATCH /api/notifications/mark-read` — bulk mark notifications as read.
 - `GET /api/host/payouts` — host payout history endpoint.
+
+## Competitive extensions (phase 5)
+
+- `POST /api/metrics/listing-interaction` — behavioral signals collection (views/favorites/booking intents).
+- `GET /api/search` now incorporates behavioral ranking signals from listing metrics.
+- `POST /api/admin/workers/outbox-dispatch` — event outbox dispatcher for async processing.
